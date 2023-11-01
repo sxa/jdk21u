@@ -213,7 +213,7 @@ public class CallGeneratorHelper extends NativeTestHelper {
     static void generateDowncalls(boolean header) {
         if (header) {
             System.out.println(
-                "#ifdef _WIN64\n" +
+                "#ifdef _WINDOWS\n" +
                 "#define EXPORT __declspec(dllexport)\n" +
                 "#else\n" +
                 "#define EXPORT\n" +
@@ -267,7 +267,7 @@ public class CallGeneratorHelper extends NativeTestHelper {
     static void generateUpcalls(boolean header) {
         if (header) {
             System.out.println(
-                "#ifdef _WIN64\n" +
+                "#ifdef _WINDOWS\n" +
                 "#define EXPORT __declspec(dllexport)\n" +
                 "#else\n" +
                 "#define EXPORT\n" +

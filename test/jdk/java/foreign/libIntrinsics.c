@@ -24,7 +24,7 @@
 
 #include <stdbool.h>
 
-#ifdef _WIN64
+#ifdef _WINDOWS
 #define EXPORT __declspec(dllexport)
 #else
 #define EXPORT
