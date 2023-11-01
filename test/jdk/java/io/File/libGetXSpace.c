@@ -23,29 +23,16 @@
 #include <stdlib.h>
 #include "jni.h"
 #include "jni_util.h"
-#ifdef WINDOWS
 #include <windows.h>
 #include <fileapi.h>
 #include <winerror.h>
-#else
-#include <errno.h>
-#include <string.h>
-#if __APPLE__
-#include <sys/param.h>
-#include <sys/mount.h>
-#else
-#include <sys/statfs.h>
-#endif
-#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef WINDOWS
 jboolean initialized = JNI_FALSE;
 BOOL(WINAPI * pfnGetDiskSpaceInformation)(LPCWSTR, LPVOID) = NULL;
-#endif
 
 //
 // root      the root of the volume
@@ -67,7 +54,6 @@ Java_GetXSpace_getSpace0
         return JNI_FALSE;
     }
 
-#ifdef WINDOWS
     if (initialized == JNI_FALSE) {
         initialized = JNI_TRUE;
         HMODULE hmod = GetModuleHandleW(L"kernel32");
@@ -126,36 +112,6 @@ Java_GetXSpace_getSpace0
         array[2] = (jlong)totalNumberOfFreeBytes.QuadPart;
         array[3] = (jlong)freeBytesAvailable.QuadPart;
     }
-#else
-    int len = (int)(*env)->GetStringLength(env, root);
-    char* chars = (char*)malloc((len + 1)*sizeof(char));
-    if (chars == NULL) {
-        (*env)->ReleaseStringChars(env, root, strchars);
-        JNU_ThrowByNameWithLastError(env, "java/lang/RuntimeException",
-                                     "malloc");
-        return JNI_FALSE;
-    }
-
-    for (int i = 0; i < len; i++) {
-        chars[i] = (char)strchars[i];
-    }
-    chars[len] = '\0';
-    (*env)->ReleaseStringChars(env, root, strchars);
-
-    struct statfs buf;
-    int result = statfs(chars, &buf);
-    free(chars);
-    if (result < 0) {
-        JNU_ThrowByNameWithLastError(env, "java/lang/RuntimeException",
-                                     strerror(errno));
-        return totalSpaceIsEstimated;
-    }
-
-    array[0] = (jlong)(buf.f_blocks*buf.f_bsize);
-    array[1] = array[0]; // number visible is the same as the total size
-    array[2] = (jlong)(buf.f_bfree*buf.f_bsize);
-    array[3] = (jlong)(buf.f_bavail*buf.f_bsize);
-#endif
     (*env)->SetLongArrayRegion(env, sizes, 0, 4, array);
     return totalSpaceIsEstimated;
 }
