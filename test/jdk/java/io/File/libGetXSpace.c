@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include "jni.h"
 #include "jni_util.h"
-#ifdef _WIN64
+#if defined (_WIN32) || defined(_WIN64)
 #include <windows.h>
 #include <fileapi.h>
 #include <winerror.h>
@@ -42,7 +42,7 @@
 extern "C" {
 #endif
 
-#ifdef _WIN64
+#if defined (_WIN32) || defined(_WIN64)
 jboolean initialized = JNI_FALSE;
 BOOL(WINAPI * pfnGetDiskSpaceInformation)(LPCWSTR, LPVOID) = NULL;
 #endif
@@ -67,7 +67,7 @@ Java_GetXSpace_getSpace0
         return JNI_FALSE;
     }
 
-#ifdef _WIN64
+#if defined (_WIN32) || defined(_WIN64)
     if (initialized == JNI_FALSE) {
         initialized = JNI_TRUE;
         HMODULE hmod = GetModuleHandleW(L"kernel32");
