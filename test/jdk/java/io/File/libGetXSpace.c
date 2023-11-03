@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include "jni.h"
 #include "jni_util.h"
-#if defined (_WIN32) || defined(_WIN64)
+#ifdef WINDOWS
 #include <windows.h>
 #include <fileapi.h>
 #include <winerror.h>
@@ -42,7 +42,7 @@
 extern "C" {
 #endif
 
-#if defined (_WIN32) || defined(_WIN64)
+#ifdef WINDOWS
 jboolean initialized = JNI_FALSE;
 BOOL(WINAPI * pfnGetDiskSpaceInformation)(LPCWSTR, LPVOID) = NULL;
 #endif
